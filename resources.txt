@@ -1,0 +1,21 @@
+# -*-text-*-
+
+. Future conformance targets may include
+      extension, reference, and subset schema documents, schema documents that
+      conform to a business rules specification, and schema documents that
+      conform to a code tables specification. A schema document may conform to
+      one or more of these conformance targets, and this should be easily
+      expressible.
+
+http://example.org/conformance-targets-utilities/xslt1/1/
+
+
+m4_changequote([[[,]]])m4_dnl
+m4_changecom(,)m4_dnl
+m4_include([[[common.m4]]])
+
+m4_dnl Local Variables:
+m4_dnl mode: sgml
+m4_dnl indent-tabs-mode: nil
+m4_dnl fill-column: 9999
+m4_dnl End:

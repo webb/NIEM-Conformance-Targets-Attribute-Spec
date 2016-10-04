@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o errexit
+
+cd "$(dirname "$0")"/..
+
+unset RELEASE_VERSION
+
+RELEASE_NAME="NIEM_Conformance_Targets_Attribute_Specification"
+
+while test $# -gt 0
+do
+    case "$1" in 
+        --version )
+            if test $# -lt 2
+            then
+                echo "ERROR: --version needs an argument" >&2
+                exit 1
+            fi
+            RELEASE_VERSION="$2"
+            shift 2
+            ;;
+        * )
+            break
+            ;;
+    esac
+done
+
+if test unset = ${RELEASE_VERSION:=unset}
+then
+    echo "ERROR: parameter --version is required but was not used" >&2
+    exit 1
+fi
+
+RELEASE_VERSION_NAME="$RELEASE_NAME"_v"$RELEASE_VERSION"
+RELEASE_DIR=tmp/"$RELEASE_VERSION_NAME"
+
+rm -rf "$RELEASE_DIR"
+
+umask 077
+
+mkdir -p "$RELEASE_DIR"
+
+make ctas.html
+
+install -m 400 ctas.html "$RELEASE_DIR"/"$RELEASE_VERSION_NAME".html
+VERBATIM_FILES=(
+    xsd/conformanceTargets.xsd
+    xsl1/conformance-targets-utilities.xsl
+)
+
+for file in "${VERBATIM_FILES[@]}"
+do
+    install -D -m 400 $file "$RELEASE_DIR"/$file
+done
+
+(
+    cd tmp
+    zip -r -v -9 "$RELEASE_VERSION_NAME".zip "$RELEASE_VERSION_NAME"
+)
+

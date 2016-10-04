@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<document xmlns="https://iead.ittl.gtri.org/wr24/doc/2011-09-30-2258"
+          xmlns:ct="http://release.niem.gov/niem/conformanceTargets/3.0/"
+          >
+  <title>NIEM Conformance Targets Attribute Specification</title>
+  <version>3.0</version>
+  <date>2014-07-31</date>
+  <author>NIEM Technical Architecture Committee (NTAC)</author>
+  <subsection>
+    <title>Authors</title>
+    <p>Webb Roberts, Georgia Tech Research Institute (<link href="mailto:webb.roberts@gtri.gatech.edu">&lt;webb.roberts@gtri.gatech.edu&gt;</link>), Lead Author</p>
+  </subsection>
+  
+  <subsection>
+    <title>Abstract</title>
+
+    <p>This document specifies an XML attribute that may occur within XML
+    documents to establish a claim that the document conforms to a set of
+    conformance targets. This specification does not define what the conformance
+    targets are; the conformance targets are established by other
+    specifications. Each conformance target is identified by an
+    internationalized resource identifier, which is defined by its relevant
+    specification.</p>
+
+  </subsection>
+
+  <subsection>
+    <title>Document Status</title>
+    <p>This document is a product of the NIEM Technical Architecture Committee
+      (NTAC). This document is normative.</p>
+  </subsection>
+  <subsection>
+    <title>Table of Contents</title>
+    <tableOfContents/>
+  </subsection>
+  <subsection>
+    <title>Table of Figures</title>
+    <tableOfFigures/>
+  </subsection>
+  <section>
+    <title>Introduction</title>
+
+    <p>The Conformance Targets Attribute Specification defines an attribute
+    that, when it appears in an XML document, claims the document conforms to
+    one or more conformance targets. This pattern and specification was
+    developed to overcome shortcomings in the NIEM
+    2 <code>ConformantIndicator</code> element, and to provide needed
+    capabilities in future specifications.</p>
+
+  <section>
+    <title>Background: NIEM 2 Conformant Indicator</title>
+
+    <p>Under NIEM 2, a NIEM-conformant XML
+    schema document must indicate that it is a NIEM-conformant schema. This is
+    done through the occurrence of an element within <code>xs:appinfo</code> in
+    the schema:</p>
+
+    <figure>
+      <title>Example of NIEM 2 ConformantIndicator</title>
+      <pre><![CDATA[<xs:schema [...]>
+  <xs:annotation>
+    <xs:documentation>[...]</xs:documentation>
+    <xs:appinfo>
+      <i:ConformantIndicator>true</i:ConformantIndicator>
+    </xs:appinfo>
+  </xs:annotation>
+  [...]
+</xs:schema>]]></pre>
+    </figure>
+    <p>The NIEM 2 conformance indicator is limited:</p>
+    <ol>
+
+      <li><p>The NIEM 2 conformance indicator does not work in documents other
+      than XML Schema documents. It is defined to only apply within a schema
+      document, when the conformant indicator is an appinfo on the document
+      element (root element) of the schema document.</p></li>
+
+      <li><p>The NIEM 2 conformance indicator only identifies conformance to a
+      single standard, NIEM 2, as indicated by the namespace in which the
+      <code>appinfo:ConformantIndicator</code> element is defined.</p></li>
+
+      <li><p>The NIEM 2 conformance indicator does not explicitly identify a
+      conformance target. It indicates that a schema document claims to be
+      conformant, but does not indicate to which conformance target it
+      conforms.</p></li>
+
+    </ol>
+
+  </section>
+  <section>
+    <title>Goals of This Specification</title>
+
+    <p>The construct specified by this specification has the following goals:</p>
+    
+    <ol>
+      <li><p>It supports specifying conformance targets within any XML document,
+      not just XML Schema documents. Any future XML document may be designed to
+      accommodate it.</p></li>
+
+      <li><p>It places a minimum of syntactic requirements on an XML
+      document. It does not require a particular document element. It does not
+      require an attribute directly on the document element.</p></li>
+
+      <li><p>It does not introduce unnecessary content, including wildcards in a
+      content model.</p></li>
+
+      <li><p>It does not introduce dependencies on unnecessary architectural
+      components or schemas.</p></li>
+
+      <li><p>It can express a claim to conform to a conformance target defined
+      by a subsequent specification, without modification to this
+      specification.</p></li>
+
+      <li><p>Subsequent specifications may explicitly leverage it with minimal
+      effort.</p></li>
+
+      <li><p>It does not require any sort of registry or centrally-controlled
+      mechanism.</p></li>
+
+      <li><p>It may be used by validation software to identify the correct
+      validation criteria for an XML document.</p></li>
+
+      <li><p>It can express claims to multiple conformance targets
+      simultaneously.</p></li>
+
+      <li><p>It supports nested documents, each with its own conformance claim,
+      without conflict.</p></li>
+
+      <li><p>It may be validated with XML Schema, but does not require its use.</p></li>
+      
+      <li><p>It may be used with XSLT 1.0 (<ref idref="XSLT1"/>) and XSLT 2.0
+      (<ref idref="XSLT2"/>) stylesheets.</p></li>
+
+    </ol>
+
+  </section>
+  <section>
+    <title>Description of the Conformance Targets Attribute</title>
+
+    <p>This specification normatively defines a conformance target attribute. An
+    XML document, for example a NIEM XML Schema document, will contain this
+    attribute to indicate to which conformance targets it claims to conform. The
+    attribute is a claim of conformance, and not a statement that should be
+    trusted by a validating system. A validator would use this claim to identify
+    to which conformance rules a document should be validated.</p>
+
+    <p>The attribute's value is a list of internationalized resource identifiers
+    (IRIs). A later specification may define an IRI for its conformance target,
+    and when an XML document has that IRI in its conformance target attribute,
+    the document is claiming to conform to that conformance target.</p>
+
+    <p>Note that all examples within this document, unless explicitly labeled
+    otherwise, are not intended to represent any actual standard, version,
+    conformance target, or identifier. All examples are mock-ups, using familiar
+    terms and subjects, but should not be interpreted to actually represent
+    other specifications or activities.</p>
+
+    <p>As mocked-up example, a specification, <em>NIEM Business Rules
+    Specification, Version 3.0</em> may define a conformance target called
+    a <q>conformant schema document</q>. Note that the conformance target is
+    particular to the specification, and the single version of that
+    specification. In this case, an XML document that conforms to that
+    conformance target would be an XML Schema document that follows the set of
+    rules defined by that specification for that conformance target. Another
+    specification may refer to that conformance target using text similar to the
+    following:</p>
+
+    <blockquote>
+      <p>... the document must be a <em>conformant schema document</em>, as defined by the <em>NIEM Business Rules Specification, Version 3.0</em> ...</p>
+    </blockquote>
+
+    <p>The <em>NIEM Business Rules Specification, Version 3.0</em> would define an IRI that uniquely identifies that conformance target, for example:</p>
+
+    <blockquote>
+      <pre>http://reference.niem.gov/niem/specification/business-rules/3.0/#SchemaDocument</pre>
+    </blockquote>
+
+    <p>The IRI identifies an authority, a specification, a particular version of that specification, and a particular conformance target within that version of the specification.</p>
+
+    <p>A schema document could claim to conform to that conformance target by
+    listing the IRI that is the identifier of the business rules <q>conformant schema
+    document</q> conformance target in its first conformance targets attribute,
+    as follows:</p>
+
+    <figure>
+      <title>Example of conformance target attribute in an XML Schema document</title>
+      <pre><![CDATA[<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ct="http://release.niem.gov/niem/conformanceTargets/3.0/"
+    ct:conformanceTargets="
+        http://reference.niem.gov/niem/specification/naming-and-design-rules/3.0/#ReferenceSchemaDocument
+        http://reference.niem.gov/niem/specification/business-rules/3.0/#SchemaDocument"
+    [...]>
+  <xs:annotation>
+    <xs:documentation>[...]</xs:documentation>
+  </xs:annotation>
+  [...]
+</xs:schema>]]></pre></figure>
+
+    <p>This example shows two conformance targets (again, this should not be
+    read as reflecting actual standards, conformance targets, or
+    identifiers):</p>
+
+    <ul>
+
+      <li><p>The first conformance target
+      (<code>...#ReferenceSchemaDocument</code>) establishes a claim that the
+      document conforms to the NIEM NDR, version 3.0's reference schema document
+      conformance target.</p></li>
+
+      <li><p>The second conformance target (<code>...#SchemaDocument</code>)
+      establishes a claim that the document conforms to a NIEM business rules
+      specification, version 3.0's schema document conformance target.</p></li>
+
+    </ul>
+
+    <p>This conformance target claim is just that, a claim. It does not
+    establish conformance, merely hints at it. The conformance claim may be
+    overridden in many ways, such as a well-known root element, doctype, schema,
+    etc. In the above example, the document element <code>xs:schema</code>
+    indicates that the document should be treated as an XML Schema document. The
+    conformance targets attribute indicates conformance targets beyond what is
+    identified by the <code>xs:schema</code> element.</p>
+
+    <p>As another example, a ULEX 1.0 message has a well-known document
+    element, <code>{ulex:message:pd:1.0}doPublish</code>, which indicates a ULEX
+    conformance target and indicates use of ULEX's rules for validation. In
+    addition, a specification that uses ULEX may choose to leverage this
+    conformance targets attribute specification to specify additional
+    conformance targets, by including within a message
+    a <code>ct:conformanceTargets</code> attribute that indicates additional
+    conformance targets.</p>
+
+    <p>In addition, an XML document may have an implied semantic that some
+    specific sub-element (e.g., a ULEX <code>StructuredPayload</code> element)
+    may contain an XML element that is meant to represent a separate XML
+    document. In such a case, the XML fragment may be written out as a separate
+    document, and the first conformance targets attribute within that document
+    will establish a claim to conformance. Validation of such nested documents
+    could be performed by a smart validator, without writing out sub-documents,
+    but specification of that is outside the scope of this specification.</p>
+
+    <p>In any case, the first occurrence in an XML document of the
+    attribute <code>ct:conformanceTargets</code> (in the
+    namespace <code>http://release.niem.gov/niem/conformanceTargets/3.0/</code>) is termed the document's <em>effective
+    conformance targets attribute</em> (see
+    <ref idref="def-effective_conformance_targets_attribute"/>). The IRIs
+    carried within that attribute are the document's <em>effective conformance
+    target identifier</em>s (see
+    <ref idref="def-effective_conformance_target_identifier"/>). Each of these
+    identifiers is an IRI that indicates a conformance target to which the
+    document may conform. </p>
+
+    <p>While this mechanism is available to specifications as a means of
+    expressing a document's claim to conform, different specifications and
+    document types may have different ways of specifying conformance. For
+    example, the MPD catalog may use the attribute to express conformance of the
+    catalog itself, while defining a separate mechanism to indicate the
+    conformants of a set of documents, since a set is not itself an XML
+    document.</p>
+
+    <p>This specification does not establish a requirement that any document use
+    the conformance attribute to identify its conformance targets. The authors
+    of subsequent specifications should make explicit whether the conformance
+    attribute is a required mechanism for labeling conformance, or if it merely
+    is used as an optional hint.</p>
+
+  </section>
+  </section>
+  <section>
+    <title>Document Conventions</title>
+    
+    <p>This document uses formatting and syntactic conventions to clarify
+    meaning and to avoid ambiguity.</p>
+
+    <section>
+      <title>RFC 2119 Terminology</title>
+      
+      <p>Within normative content (rules and definitions), the key words MUST,
+      MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED,
+      MAY, and OPTIONAL in this document are to be interpreted as described in
+      <ref idref="RFC2119"/>.</p>
+    </section>
+    <section>
+      <title>Use of Namespaces</title>
+
+      <p>The following namespaces are used consistently within this
+      document:</p>
+
+      <ul>
+
+        <li><p>The namespace prefix <code>xs</code> is bound to the namespace URI
+        reference <code>http://www.w3.org/2001/XMLSchema</code>.</p></li>
+
+        <li><p>The namespace prefix <code>ct</code> is bound to the namespace URI
+        reference <code>http://release.niem.gov/niem/conformanceTargets/3.0/</code>.</p></li>
+
+      </ul>
+
+      <p>The use of namespace prefixes and prefix-qualified names within this
+      specification does not constitute a requirement for any artifact to use
+      any specific namespace prefix. Namespace prefixes are immaterial to
+      conformance to this specification.</p>
+    </section>
+  <section>
+    <title>Clark Notation</title>
+    <p>This document uses Clark notation to represent qualified names in
+    normative text. Clark notation is described by <ref idref="ClarkNS"/>, and
+    provides the information in an XML qualified name (as defined by
+    <ref idref="XMLNamespaces"/>) without the need to define a namespace prefix
+    and then reference that namespace prefix. A Clark notation value looks like
+    the following: </p>
+
+    <figure>
+      <title>Clark notation for <code>xs:string</code></title>
+      <pre>{http://www.w3.org/2001/XMLSchema}string</pre>
+    </figure>
+
+    <p>Each Clark notation value consists of a namespace URI surrounded by curly
+    braces, concatenated with a local name. Such a namespace/local name pair may
+    be expressed in XML using a namespace prefix, or a default namespace
+    binding, as specified in the <ref idref="XMLNamespaces"/>.</p>
+  </section>
+  <section>
+    <title>Normative content</title>
+    <p>This document contains text that is normative, and text that is
+    informative. This section describes the normative forms.</p>
+
+    <p>A definition defines a term that is used within rules.</p>
+
+    <bogusDefinition term="&lt;term&gt;">
+      <p>A formal definition of a term used within the document.</p>
+    </bogusDefinition>
+
+    <p>A rule states a specific requirement on a conformance target. The
+    conformance target is explicitly identified in the text of the rule. A rule
+    uses terminology from <ref idref="RFC2119"/> to establish
+    requirements. Rules are normative.</p>
+    
+    <bogusRule section="&lt;section&gt;" number="&lt;number&gt;">
+      <p>An enforceable rule.</p>
+    </bogusRule>
+
+  </section>
+  </section>
+  <section>
+    <title>Conformance</title>
+  <section>
+    <title><em>Conformance Target</em> Defined</title>
+
+    <p>This document uses the term <em>conformance target</em> in a normative
+    way:</p>
+
+    <definition term="conformance target">
+      <p>A <em>conformance target</em> is a class of artifact, such as an interface,
+      protocol, document, platform, process or service, that is the subject of
+      conformance clauses and normative statements. There may be several
+      conformance targets defined within a specification, and these targets may
+      be diverse so as to reflect different aspects of a specification. For
+      example, a protocol message and a protocol engine may be different
+      conformance targets.</p>
+    </definition>
+
+    <p>The above definition of <em>conformance target</em> is adapted from
+    <ref idref="OASISConformance"/>. This definition is overly broad for the
+    purposes of this specification, as this specification is concerned only with
+    conformance targets that are XML documents.</p>
+
+    <definition term="conformance target identifier">
+      <p>A <em>conformance target identifier</em> is an internationalized
+      resource identifier that uniquely identifies a conformance target.</p>
+    </definition>
+
+    <p>The term <em>internationlized resource identifier</em> (IRI) is defined
+    by <ref idref="RFC3987"/>. The RFC also defines comparison of IRIs.</p>
+  </section>
+  <section>
+    <title>Conformance to this Specification</title>
+
+    <p>This specification defines a single conformance target, normatively
+    referred to within this document as a <em>conformant document</em>.</p>
+
+    <definition term="conformant document">
+      <p>A <em>conformant document</em> is a document that uses the conformance
+      targets attribute defined by this specification to express a claim that it
+      conforms to specific conformance targets.  A conformant document MUST
+      satisfy all rules in this specification for conformant documents.</p>
+    </definition>
+
+    <p>For an example of the use of this term in another specification, see
+    <ref idref="section-use"/>.</p>
+  </section>
+  <section>
+
+    <title>Syntactic Conformance</title>
+
+    <ruleSection>
+      <title>Conformant document is an XML document</title>
+    <rule>
+      <p>A conformant document MUST be an XML document.</p>
+    </rule>
+    </ruleSection>
+
+    <p>The term <em>XML document</em> is defined by <ref idref="XML"/>.</p>
+
+    <ruleSection>
+      <title>Attribute <qName>ct:conformanceTargets</qName> is valid</title>
+    <rule>
+      <p>Within a conformant document, every occurrence of the attribute
+        <code>{http://release.niem.gov/niem/conformanceTargets/3.0/}conformanceTargets</code> MUST be locally
+        schema-valid to the XML Schema component definition contained in
+        <ref idref="CTXSD"/>.</p>
+    </rule>
+    </ruleSection>
+
+    <p>The schema-validity of an attribute is defined by
+    <ref idref="XMLSCHEMA1"/>. This specification does not require that the
+    validity of a conformant artifact actually be assesed, only that the
+    occurrences of the attribute satisfy the constraints embodied in the schema
+    document.</p>
+
+    <p>This specification does not require any specific system or exchange
+    specification to use this particular schema document. A system or exchange
+    specification may use or incorporate a schema for this namespace that adds
+    or removes annotations or modifies other characteristics of the schema, for
+    example to make the schema document conformant to some specification.</p>
+
+    <ruleSection>
+      <title>Namespace defines only attribute <qName>ct:conformanceTargets</qName></title>
+    <rule id="no-ct-el"><p>A conformant document MUST NOT contain any element or attribute
+    information item that has the namespace name <code>http://release.niem.gov/niem/conformanceTargets/3.0/</code>, other than
+    attribute <code>{http://release.niem.gov/niem/conformanceTargets/3.0/}conformanceTargets</code>.</p></rule>
+    </ruleSection>
+
+    <ruleSection>
+      <title>No reference to types in conformance targets namespace</title>
+    <rule id="no-xsi-type"><p>A conformant document MUST NOT contain an
+    attribute <code>{http://www.w3.org/2001/XMLSchema-instance}type</code> with
+    a value that has a namespace name of <code>http://release.niem.gov/niem/conformanceTargets/3.0/</code>.</p></rule>
+    </ruleSection>
+    
+    <p><ref idref="no-ct-el"/> and <ref idref="no-xsi-type"/> defend against
+    abuse of the conformance targets attribute namespace, ensuring that any
+    document that implies that there are additional schema components defined in
+    the conformance targets attribute namespace is not conformant.</p>
+
+    <ruleSection>
+      <title>Attribute <qName>ct:conformanceTargets</qName> contains only absolute IRI references</title>
+    <rule><p>Within a conformant document, each item in the value of an
+    attribute <code>{http://release.niem.gov/niem/conformanceTargets/3.0/}conformanceTargets</code> MUST be an absolute
+    IRI reference.</p></rule>
+    </ruleSection>
+
+    <p>The definition of an absolute IRI reference is defined by
+    <ref idref="RFC3987"/>.</p>
+
+    <ruleSection>
+      <title>Document may contain any number of <qName>ct:conformanceTargets</qName> attributes</title>
+    <rule><p>A conformant document MAY include any number of occurrences of the
+    attribute <code>{http://release.niem.gov/niem/conformanceTargets/3.0/}conformanceTargets</code>.</p></rule>
+    </ruleSection>
+    
+    <p>This specification does not restrict the number of occurrences of the
+    conformance targets attribute. If a document has no occurences of the
+    conformance targets attribute, or if the effective conformance target
+    attribute contains no items, then the document does not claim to conform to
+    any conformance targets via the mechanisms of this specification. If there
+    are multiple occurrences of the conformance targets attribute, only one is
+    effective for the document.</p>
+
+  </section>
+  </section>
+  <section>
+    <title>Semantics and Use</title>
+    
+    <p>This section defines the meaning of the constructs, and provides text for
+    other specifications to leverage the Conformance Targets Attribute
+    Specification.</p>
+
+    <definition id="def-effective_conformance_targets_attribute" term="effective conformance targets attribute">
+      <p>The <em>effective conformance targets attribute</em> of a
+      conformant document is the first occurrence of the
+      attribute <code>{http://release.niem.gov/niem/conformanceTargets/3.0/}conformanceTargets</code>, in document
+      order.</p>
+    </definition>
+
+    <p>The term <em>document order</em> is defined by <ref idref="XPathDM"/>. A
+    suggested XPath 2 expression for the effective conformance targets attribute
+    follows. It is not normative.</p>
+
+    <figure>
+      <title>XPath 2 expression yielding effective conformance targets attribute</title>
+      <pre><![CDATA[(//@*:conformanceTargets[
+  namespace-uri() = 'http://release.niem.gov/niem/conformanceTargets/3.0/'
+])[1] ]]></pre>
+    </figure>
+
+    <p>An IRI reference that occurs within the effective conformance targets
+    attribute estabishes a claim to conform to some conformance target. Each
+    conformance target attribute may make any number of claims. Each such claim
+    may be testable by validation software or by human review to verify or
+    falsify the claim that it conforms. Each such identifier is an <em>effective
+    conformance target identifier</em>. Validation of a claim to conform to a
+    conformance target is outside the scope of this specification.</p>
+
+    <definition id="def-effective_conformance_target_identifier" term="effective conformance target identifier">
+      <p>An <em>effective conformance target identifier</em> of a conformant
+      document is an internationalized resource identifier reference that
+      occurs in the document's effective conformance targets attribute.</p>
+    </definition>
+
+    <p>It is expected (but not required) that each effective conformance target
+    identifier will be an IRI that is defined by some specification to represent
+    a conformance target.</p>
+
+    <section>
+      <title>Suggested Validator Behavior</title>
+
+      <p>This section includes a non-normative description of the way the
+      constructs defined by this specification are intended to work. This
+      section is not normative.</p>
+
+      <p>A validator should use the effective conformance target identifiers of
+      a conformant document as hints indicating possible intended conformance
+      targets for the document. </p>
+
+      <p>A validator should not identify claimed conformance targets using
+      occurrences of the conformance targets attribute other than the 
+      effective conformance targets attribute. Only the first occurrence of the
+      conformance targets attribute, in document order, establishes a claim to
+      conformance.</p>
+
+      <p>A validator should limit validation to known conformance target
+      identifiers. It should ignore unknown identifiers.</p>
+
+      <p>A validator should not treat the order the order of conformance target
+      identifiers within the effective conformance targets attribute as
+      significant. The contents of a conformance targets attribute should be
+      treated as a set, rather than an ordered list.</p>
+
+    </section>
+
+  <section id="section-use">
+    <title>Use of this Specification</title>
+
+    <p>The following should be true for a specification that leverages this
+    specification:</p>
+    <ol>
+
+      <li><p>The specification defines explicit conformance targets.</p></li>
+
+      <li><p>Normative statements made by the specification are prescriptive
+      requirements on those conformance targets.</p></li>
+
+      <li><p>Each conformance target that is an XML document, and for which the
+      Conformance Targets Attribute Specification will be leveraged, is assigned
+      a conformance target identifier by the specification. Each such identifier
+      is an IRI, and is unique to the specification, version, and conformance
+      target.</p></li>
+
+      <li>
+        <p>For the conformance target with the
+        name <code>$conformance-target-name</code> and the conformance target
+        identifier <code>$conformance-target-identifier</code>, the
+        specification includes normative text similar to the following:</p>
+
+        <blockquote>
+          <p>A <code>$conformance-target-name</code> MUST be a
+          <em>conformant document</em> as defined by the <em>NIEM Conformance
+          Targets Attribute Specification</em> Version 3.0, and MUST have an
+          <em>effective conformance target identifer</em>
+          of <code>$conformance-target-identifier</code>.</p>
+        </blockquote>
+
+        <p>A specification that uses the conformance targets attribute as an
+        optional hint would replace the word MUST in the above rule with the
+        word MAY or SHOULD, as appropriate for the level of requirement
+        desired.</p>
+      </li>
+    </ol>
+
+  </section>
+
+  </section>
+
+  <section isAppendix="true">
+    <title>References</title>
+    <reference id="ClarkNS">
+      <p>Clark, J. (1999, February 4). <em>XML Namespaces</em>. Retrieved June
+      21, 2012, from <link>http://www.jclark.com/xml/xmlns.htm</link></p>
+    </reference>
+    <reference id="OASISConformance">
+      <p><em>Guidelines to Writing Conformance Clauses</em>. (2007, September
+      4). <em>OASIS Technical Committee Handbook</em>. Retrieved June 15, 2012,
+      from <link href="http://docs.oasis-open.org/templates/TCHandbook/ConformanceGuidelines.html#_Toc170119661"
+      >http://docs.oasis-open.org/templates/TCHandbook/ConformanceGuidelines.html</link></p>
+    </reference>
+    <reference id="RFC2119">
+      <p>Bradner, S. (1997, March). <em>Key words for use in RFCs to Indicate
+      Requirement Levels</em>. Internet Engineering Task Force. Retrieved
+      from <link>http://www.ietf.org/rfc/rfc2119.txt</link></p>
+    </reference>
+    <reference id="RFC3987">
+      <p>Duerst, M., &amp; Suignard, M. (2005, January). <em>Internationalized
+      Resource Identifiers (IRIs), RFC 3987</em>. Retrieved June 21, 2012,
+      from <link>http://www.ietf.org/rfc/rfc3987</link></p>
+    </reference>
+    <reference id="XML">
+      <p>Bray, T., Paoli, J., Sperberg-McQueen, C. M., Maler, E., &amp; Yergeau,
+      F. (2008, November 26). <em>Extensible Markup Language (XML) 1.0 (Fifth
+      Edition)</em>. The World Wide Web Consortium (W3C). Retrieved
+      from <link>http://www.w3.org/TR/xml/</link></p>
+    </reference>
+    <reference id="XMLSCHEMA1" label="XMLSchema1">
+      <p>Thompson, H. S., Beech, D., Maloney, M., &amp; Mendelsohn, N. (2004,
+      October 28). <em>XML Schema Part 1: Structures Second
+      Edition</em>. Retrieved
+      from <link>http://www.w3.org/TR/xmlschema-1/</link>.</p>
+    </reference>
+    <reference id="XMLNamespaces">
+      <p>Bray, T., Hollander, D., Layman, A., Tobin, R., &amp; Thompson,
+      H. S. (2009, December 8). <em>Namespaces in XML 1.0 (Third
+      Edition)</em>. W3C. Retrieved
+      from <link>http://www.w3.org/TR/2009/REC-xml-names-20091208/</link></p>
+    </reference>
+    <reference id="XPathDM">
+      <p>Berglund, A., Fern<char name="aacute"/>ndez, M. F., Malhotra, A., Marsh, J., Nagy, M.,
+      &amp; Walsh, N. (2010, December 14). <em>XQuery 1.0 and XPath 2.0 Data
+      Model (XDM) (Second Edition)</em>. Retrieved June 21, 2012,
+      from <link>http://www.w3.org/TR/xpath-datamodel/</link></p>
+    </reference>
+    <reference id="XSLT1">
+      <p>Clark, J. (1999, November 16). <em>XSL Transformations (XSLT) Version
+      1.0</em>. W3C. Retrieved from <link>http://www.w3.org/TR/xslt</link></p>
+    </reference>
+    <reference id="XSLT2">
+      <p>Kay, M. (2007, January 23). <em>XSL Transformations (XSLT) Version
+      2.0</em>. W3C. Retrieved
+      from <link>http://www.w3.org/TR/2007/REC-xslt20-20070123/</link></p>
+    </reference>
+  </section>
+  <section>
+    <title>XML Schema Document for Conformance Targets Attribute</title>
+    <figure id="CTXSD">
+      <title>XML Schema Document for Conformance Targets Attribute</title>
+      <pre><include-text href="xsd/conformanceTargets.xsd"/></pre>
+    </figure>
+  </section>
+  <section>
+    <title>Sample XSLT Version 1.0 Implementation</title>
+
+    <p>The following is a sample implementation of XSLT version 1.0 (<ref idref="XSLT1"/>) templates
+    that interact with the conformance targets attribute. This section is not
+    normative. The key templates are:</p>
+
+    <ul>
+      <li><p><code>ctu:get-effective-conformance-targets</code>: Yields the
+      effective conformance targets for the current XML document.</p></li>
+
+      <li><p><code>ctu:conformance-targets-contains</code>: Indicates if the
+      list of conformance targets (passed in as a parameter) contains a specific
+      conformance target IRI.</p></li>
+    </ul>
+    <figure>
+      <title>Sample XSLT Version 1.0 Implementation</title>
+      <pre><include-text href="xsl1/conformance-targets-utilities.xsl"/></pre>
+    </figure>
+  </section>
+  <section>
+    <title>Sample XSLT Version 2.0 Implementation</title>
+    <p>The following is a sample implementation of XSLT version 2.0 (<ref idref="XSLT2"/>) functions
+    that interact with the conformance targets attribute. This section is not
+    normative. The key functions are:</p>
+    <ul>
+      <li><p><code>ctu:get-effective-conformance-targets($node as node()) as
+      xs:anyURI*</code>: Yields the effective conformance targets for the XML
+      document containing the given node.</p></li>
+
+      <li><p><code>ctu:conformance-targets-contains($conformance-targets as
+      xs:anyURI*, $iri as xs:anyURI) as xs:boolean</code>: Indicates if the
+      given sequence of conformance targets contains the given IRI.</p></li>
+    </ul>
+    <figure>
+      <title>Sample XSLT Version 2.0 Implementation</title>
+      <pre><include-text href="xsl2/conformance-targets-utilities.xsl"/></pre>
+    </figure>
+  </section>
+  <section id="index-of-defns"><title>Index of definitions</title>
+    <indexOfDefinitions/>
+  </section>
+  <section id="index-of-rules"><title>Index of rules</title>
+    <indexOfRules/>
+  </section>
+</document>

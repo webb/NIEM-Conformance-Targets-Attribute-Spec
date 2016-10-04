@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o errexit
+
+if test unset = ${IEAD_TOOLS_ROOT:=unset}
+then
+    echo ERROR: environment variable IEAD_TOOLS_ROOT is not set >&2
+    exit 1
+fi
+
+unset IRI
+
+ROOTDIR="$(realpath -L -m "$0"/../..)"
+
+while test $# -gt 0
+do
+    case "$1" in
+        -iri )
+            if test $# -lt 2
+            then
+                echo "ERROR: paramenter -iri requires argument" >&2
+                exit 1
+            fi
+            IRI="$2"
+            shift 2
+            ;;
+        * )
+            break
+            ;;
+    esac
+done
+
+if test unset = ${IRI:=unset}
+then
+    echo "ERROR: parameter -iri was not used. Its use is required." >&2
+    exit 1
+fi
+
+make -C "$ROOTDIR" xsl1/test-for-conformance-target.xsl xsl1/conformance-targets-utilities.xsl >&2
+
+while test $# -gt 0
+do
+    TEMPFILE=$(mktemp)
+    echo -n "$1: "
+    "$IEAD_TOOLS_ROOT"/bin/xalan \
+        -IN "$1" \
+        -XSL "$ROOTDIR"/xsl1/test-for-conformance-target.xsl \
+        -PARAM iri "$IRI" \
+        -OUT "$TEMPFILE"
+    cat "$TEMPFILE"
+    rm -f "$TEMPFILE"
+    shift 1
+done

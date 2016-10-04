@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+RETURN_VALUE=0
+
+cd "$(dirname "$0")"/..
+
+for test in $(find tests -type f -name 'test.*' -print)
+do
+    case "$test" in
+        *~ ) ;; # ignore backup files
+        * )
+            if ! "$test"
+            then
+                RETURN_VALUE=1
+            fi
+            ;;
+    esac
+done
+
+exit "$RETURN_VALUE"

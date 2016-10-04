@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+if test unset = ${IEAD_TOOLS_ROOT:=unset}
+then
+    echo ERROR: environment variable IEAD_TOOLS_ROOT is not set >&2
+    exit 1
+fi
+
+URI=""
+
+ROOTDIR="$(realpath -L -m "$0"/../..)"
+
+make -C "$ROOTDIR" xsl2/get-conformance-targets.xsl xsl2/conformance-targets-utilities.xsl >&2
+
+while test $# -gt 0
+do
+    case "$1" in
+        * )
+            break
+            ;;
+    esac
+done
+
+while test $# -gt 0
+do
+    TEMPFILE=$(mktemp)
+    java -jar "$IEAD_TOOLS_ROOT"/share/saxon-he-j/saxon9he.jar \
+        -s:"$1" \
+        -xsl:"$ROOTDIR"/xsl2/get-conformance-targets.xsl \
+        -o:"$TEMPFILE"
+    cat "$TEMPFILE"
+    rm -f "$TEMPFILE"
+    shift 1
+done

@@ -1,0 +1,58 @@
+# -*-shell-script-*-
+
+test_run () {
+    TEST_RUN_OUTPUT=$(mktemp)
+    echo '#' "$@" > "$TEST_RUN_OUTPUT"
+    script -a -q "$TEST_RUN_OUTPUT" "$@"
+}
+
+test_get_run_output () {
+    sed -s 's/^/> /' < "$TEST_RUN_OUTPUT"
+    rm -f "$TEST_RUN_OUTPUT"
+}
+
+test_run () {
+    TEST_RUN_OUTPUT=$(mktemp)
+    echo '#' "$@" > "$TEST_RUN_OUTPUT"
+    "$@" >> "$TEST_RUN_OUTPUT" 2>&1
+}
+
+test_run_output () {
+    sed -s 's/^/> /' < "$TEST_RUN_OUTPUT"
+    rm -f "$TEST_RUN_OUTPUT"
+}
+
+TEST_TEMPS=()
+
+test_mktemp () {
+    for name in "$@"
+    do
+        TEMPFILE="$(mktemp)"
+        eval "$name"="$TEMPFILE"
+        TEST_TEMPS[${#TEST_TEMPS[@]}]="$TEMPFILE"
+    done
+}
+
+test_finish () {
+    for file in "${TEST_TEMPS[@]}"
+    do
+        rm -f "$file"
+    done
+    TEST_TEMPS=()
+}
+    
+test_run_compare () {
+    local EXPECTED="$(mktemp)"
+    cat > "$EXPECTED"
+    local ACTUAL="$(mktemp)"
+    echo "#" "$@" >&2
+    "$@" > "$ACTUAL"
+    local DIFF="$(mktemp)"
+    if ! diff --unified=3 "$EXPECTED" "$ACTUAL" > "$DIFF"
+    then
+        echo "$0: actual output did not meet expected output: $@"
+        sed -e 's/^/> /' < "$DIFF"
+    fi
+    rm -f "$EXPECTED" "$ACTUAL" "$DIFF"
+}
+

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/.."
+. tests/helper-functions
+
+cat <<EOF | test_run_compare bin/get-conformance-targets-xsl1 example1/local.xsd
+http://reference.niem.gov/niem/naming-and-design-rules/3.0/#ReferenceSchemaDocument
+http://reference.niem.gov/niem/business-rules-specification/3.0/#ConformantXMLSchemaDocument
+EOF
+
+cat <<EOF | test_run_compare bin/get-conformance-targets-xsl1 example1/niem-core.xsd
+http://reference.niem.gov/niem/specification/naming-and-design-rules/3.0/#ReferenceSchemaDocument
+EOF
+
+cat <<EOF | test_run_compare bin/test-for-conformance-target-xsl1 -iri http://reference.niem.gov/niem/naming-and-design-rules/3.0/#ReferenceSchemaDocument example1/local.xsd
+example1/local.xsd: true
+EOF
+
+cat <<EOF | test_run_compare bin/test-for-conformance-target-xsl1 -iri http://reference.niem.gov/niem/business-rules-specification/3.0/#ConformantXMLSchemaDocument example1/local.xsd
+example1/local.xsd: true
+EOF
+
+cat <<EOF | test_run_compare bin/test-for-conformance-target-xsl1 -iri http://example.org/ example1/local.xsd
+example1/local.xsd: false
+EOF
+
+cat <<EOF | test_run_compare bin/get-conformance-targets-xsl2 example1/local.xsd
+http://reference.niem.gov/niem/naming-and-design-rules/3.0/#ReferenceSchemaDocument
+http://reference.niem.gov/niem/business-rules-specification/3.0/#ConformantXMLSchemaDocument
+EOF
+
+cat <<EOF | test_run_compare bin/get-conformance-targets-xsl2 example1/niem-core.xsd
+http://reference.niem.gov/niem/specification/naming-and-design-rules/3.0/#ReferenceSchemaDocument
+EOF
+
+cat <<EOF | test_run_compare bin/test-for-conformance-target-xsl2 -iri http://reference.niem.gov/niem/naming-and-design-rules/3.0/#ReferenceSchemaDocument example1/local.xsd
+example1/local.xsd: true
+EOF
+
+cat <<EOF | test_run_compare bin/test-for-conformance-target-xsl2 -iri http://reference.niem.gov/niem/business-rules-specification/3.0/#ConformantXMLSchemaDocument example1/local.xsd
+example1/local.xsd: true
+EOF
+
+cat <<EOF | test_run_compare bin/test-for-conformance-target-xsl2 -iri http://example.org/ example1/local.xsd
+example1/local.xsd: false
+EOF
+

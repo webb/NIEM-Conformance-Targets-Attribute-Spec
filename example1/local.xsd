@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    ct:conformanceTargets="
+        http://reference.niem.gov/niem/naming-and-design-rules/3.0/#ReferenceSchemaDocument
+        http://reference.niem.gov/niem/business-rules-specification/3.0/#ConformantXMLSchemaDocument
+        "
+    targetNamespace="http://icl.gtri.gatech.edu/wr24/2011-02-02/"
+    xmlns:nc="http://niem.gov/niem/niem-core/2.0"
+    xmlns:ct="http://release.niem.gov/niem/conformanceTargets/3.0/"
+    xmlns:nbr="http://reference.niem.gov/niem/business-rules-vocabulary/1.0"
+    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    xmlns:this="http://icl.gtri.gatech.edu/wr24/2011-02-02/"
+    xmlns="http://www.w3.org/2001/XMLSchema">
+
+  <import namespace="http://niem.gov/niem/niem-core/2.0" 
+          schemaLocation="niem/niem-core/2.0/niem-core.xsd"/>
+
+  <annotation>
+    <appinfo>
+      <sch:ns prefix="this" uri="http://icl.gtri.gatech.edu/wr24/2011-02-02/"/>
+      <sch:ns prefix="nc" uri="http://niem.gov/niem/niem-core/2.0"/>
+    </appinfo>
+  </annotation>
+
+  <element name="Transport" 
+           substitutionGroup="nc:CommercialVehicle" 
+           type="nc:CommercialVehicleType">
+    <annotation>
+      <appinfo>
+
+        <!-- apply to simple content -->
+        <nbr:ComplexContentTest nillable="false"/>
+
+        <nbr:ChildElementTest
+           ref="nc:VehicleCMVIndicator" 
+           style="content"
+           minOccurs="2"
+           maxOccurs="7"
+           nillable="false"/>
+
+        <nbr:ChildAttributeTest
+           ref="nc:lengthUnit" 
+           use="required"/>
+
+        <nbr:ChildAttributeTest ref="nc:someAttr" use="required"/>
+
+        <sch:pattern>
+          <sch:rule context="this:Transport">
+            <sch:assert test="exists(nc:VehicleStyleCode[text() = 'DS' or text() = 'TR'])"
+                    >Transport must be a diesel truck or gasoline truck</sch:assert>
+          </sch:rule>
+        </sch:pattern>
+
+        <nbr:Rule>
+          <nbr:RuleText>Transport must be a diesel truck or gasoline truck</nbr:RuleText>
+          <nbr:ChildElementTest ref="nc:VehicleStyleCode">
+            <nbr:Enumeration value="DS"/>
+            <nbr:Enumeration value="TR"/>
+          </nbr:ChildElementTest>
+        </nbr:Rule>
+
+        <nbr:Rule>
+          <nbr:RuleText>Transport must be a diesel truck or gasoline truck</nbr:RuleText>
+          <nbr:ChildElementTest ref="nc:VehicleStyleCode">
+            <nbr:Pattern value="DS"/>
+            <nbr:Pattern value="TR"/>
+          </nbr:ChildElementTest>
+        </nbr:Rule>
+
+        <nbr:Rule>
+          <nbr:RuleText>Transport must be a diesel truck or gasoline truck.</nbr:RuleText>
+          <nbr:XPathTest test="
+              exists(schema-element(nc:VehicleStyleCode)[
+                               text() = 'DS' or text() = 'TR'])">
+            <nbr:DiagnosticText>Transport did not have <nbr:QName>nc:VehicleStyleCode</nbr:QName> with a value of <nbr:Code>DS</nbr:Code> or <nbr:Code>TR</nbr:Code>.</nbr:DiagnosticText>
+          </nbr:XPathTest>
+        </nbr:Rule>
+
+        <nbr:Rule>
+          <nbr:RuleText>Transport must be a diesel truck or gasoline truck.</nbr:RuleText>
+          <nbr:XPathTest test="exists(schema-element(nc:VehicleStyleCode)[
+                                  text() = 'DS' or text() = 'TR'])">
+            <nbr:DiagnosticText>Transport did not have <nbr:QName>nc:VehicleStyleCode</nbr:QName> with a value of <nbr:Code>DS</nbr:Code> or <nbr:Code>TR</nbr:Code>.</nbr:DiagnosticText>
+          </nbr:XPathTest>
+        </nbr:Rule>
+
+        <nbr:Rule reqLevel="should">
+          <nbr:RuleText>Transport should be used for transportation of property.</nbr:RuleText>
+          <nbr:XPathTest test="exists(schema-element(nc:VehicleUseCode)[text() = '07'])">
+            <nbr:DiagnosticText>Transport should have an element <nbr:QName>nc:VehicleUseCode</nbr:QName> with a value of <nbr:Code>07</nbr:Code></nbr:DiagnosticText>
+          </nbr:XPathTest>
+        </nbr:Rule>
+
+        <nbr:Rule>
+          <nbr:RuleText>Transport must be a commercial motor vehicle</nbr:RuleText>
+          <nbr:XPathTest test="exists(schema-element(nc:VehicleCMVIndicator)[data(text()) = true()])">
+            <nbr:DiagnosticText><nbr:QName>nc:VehicleCMVIndicator</nbr:QName> must indicate that Transport is a commercial motor vehicle.</nbr:DiagnosticText>
+          </nbr:XPathTest>
+        </nbr:Rule>
+
+        <nbr:Rule>
+          <nbr:RuleText
+             >Transport must have exactly one vehicle style code</nbr:RuleText>
+        </nbr:Rule>
+
+      </appinfo>
+    </annotation>
+  </element>
+
+</schema>
+ 
+<!-- 
+  Local Variables:
+  mode: sgml
+  indent-tabs-mode: nil
+  fill-column: 9999
+  End:
+-->

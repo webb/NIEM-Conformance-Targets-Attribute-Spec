@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. "$1"
+
+cat <<EOF
+m4_changequote([[[,]]])m4_dnl
+m4_changecom(,)m4_dnl
+m4_define([[[CT_NAMESPACE]]],[[[$CT_NAMESPACE]]])m4_dnl
+m4_define([[[RELEASE_DATE]]],[[[$RELEASE_DATE]]])m4_dnl
+m4_define([[[RELEASE_VERSION]]],[[[$RELEASE_VERSION]]])m4_dnl
+m4_define([[[RELEASE_NV]]],[[[$RELEASE_NV]]])m4_dnl
+m4_define([[[CTU_XSL1_NAMESPACE]]],[[[$CTU_XSL1_NAMESPACE]]])m4_dnl
+m4_define([[[CTU_XSL2_NAMESPACE]]],[[[$CTU_XSL2_NAMESPACE]]])m4_dnl
+EOF
